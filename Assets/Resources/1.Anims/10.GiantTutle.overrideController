@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 10.GiantTutle
+  m_Controller: {fileID: 9100000, guid: fdf6f32dc856e854da754aabcfddb923, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 21ef8118394b3b146bb8b6188eaf6a6a, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 2a45aa659a4e57e45a3335ef937e2a76, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: cbcc06f51b831794b8a53081a296d86b, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 615c79a7200132b4a857eaf3ed516a16, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: a0ed291b0b05e9c4da3afb9fc92ae8ed, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: cd9f890b320cf2b46a5cf3bbace41156, type: 2}

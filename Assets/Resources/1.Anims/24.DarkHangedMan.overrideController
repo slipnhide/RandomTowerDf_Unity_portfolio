@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 24.DarkHangedMan
+  m_Controller: {fileID: 9100000, guid: fdf6f32dc856e854da754aabcfddb923, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 21ef8118394b3b146bb8b6188eaf6a6a, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: ea83a743b430c5c43ac829dec48c0e75, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: cbcc06f51b831794b8a53081a296d86b, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: fcb88a158d7c7aa47a344cbfcf366e4f, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: a0ed291b0b05e9c4da3afb9fc92ae8ed, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 71327bcd7886621489b95185ea7e5256, type: 2}

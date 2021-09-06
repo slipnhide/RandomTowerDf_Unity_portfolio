@@ -1,0 +1,119 @@
+현제까지 주의점
+1.현제 랭크별 확률은 Player_Info 클래스의 RankPerLv[] 형태로 인스펙터창 관리
+2.시너지 단계 관리는 SynergySystem.Set에서 스크립트관리
+3.웨이브 관리는 WaveSystem의 Wave에서 게임오브젝트 프리팹 형태로 인스펙터창 관리 
+
+4.협업전 조율 문제
+4-1 현제는 TowerList에 게임 오브젝트 프리팹으로 넣어두는걸 전재로함
+4-2 Tower라는 임시 클래스로 준비했는데 Tower클래스는
+상점에 쓸 이미지,종족,직업 ,가격, 타워의랭크가 필요함
+4-3 웨이브시 Enemy라는 임시 클래스로 적이 가지게했고
+이동경로는 Transform[] 로 전달함
+4-4 생성전 모든 준비는 시스템쪽에서 했지만
+초기화 문제는 생성하는 함수에서 해야할수도있음
+4-5 웨이브 종료시 몬스터의 모든처리를 전투담당에게 맞긴후 삭제만 나에게 넘김
+
+Common_Static_Field(전역변수 전용 클래스)
+
+정리
+1.
+일단 Tower를 타워의 클래스로 가정
+GameManager  오브젝트의 TowerList클래스에
+타워의 랭크별로 프리팹 게임오브젝트형태로 저장
+
+2-1 리롤
+리롤버튼을 누르게 되면 GachaSystem의 Roll()호출
+GameManager의 Player_Info 의 골드를 
+전역변수의 리롤비용 검사한뒤 충분하면 리롤진행
+Player_Info 의 플레이어 레벨별 랭크 확률을 가지고있는
+RankPerLv 을 가져오고
+높은 랭크에서 부터 확률을 누적하면서
+확률 보다 낮은 랜덤 값이 나오면(적중하면)
+ 해당 랭크에 타워가 있는지 확인하고 없다면 더 낮은 
+랭크로 넘어감.
+랭크를 정한뒤에 해당 랭크의 타워갯수중 하나를 랜덤으로 결정함
+후에 타워 리스트의 해당 랭크 목록의 배열중 해당 랜덤값의 타워 클래스틑 가져옴
+-> 가챠목록슬롯이 가지고있는 GachaSlot클래스의 Set(Tower)호출
+-슬롯 갯수만큼 반복
+
+2-2
+GachaSlot의Set(Tower) 에서 이미지와 필요금액등 해당 클래스 가지고 있는 버튼의 텍스트와 이미지 변경
+
+3-1 구매
+빈칸을 누른거라면 넘어가고 아니라면 진행
+gachaSystem.Buy(Tower) 호출 해서 거래 진행이 됬다면
+현제 슬롯은 초기상태로 초기화 , 초기화 과정에서 기본 이미지 확인을 위해서 gachaSystem.BaseGachaSlot 사용
+
+3-2 gachaSystem.Buy
+PlyerInfo의 골드와 전달받은 Tower의 판매골드량 비교
+DeckSlot중 빈곳을 확인하고 빈곳이 있다면
+골드를 변경하고 DeckSlot.SetSlot(Tower) 호출
+거래 완료시 true반환 아니라면 False반환
+
+3-3 DeckSlot.SetSlot(Tower) 
+GachaSlot의Set(Tower)와 같은 과정 단 골드는 제외
+
+4-1 설치
+덱에서 드래그 하면 DragFromDeck() 호출
+해당 버튼은 드래그 중확인하는 bool값 변경
+현제 가지고있는 타워의 이미지만을 가지는 게임 오브젝트 생성 후에 코루틴 Drag호출
+Drag호출에서는 마우스 위치로 생성한 이미지 오브젝트 이동 이동중에 Physics.Raycast이용해서 타일 스크립트 가진 오브젝트위치 라면 해당 타일 위치로 이미지 오브젝트 위치변경
+마우스를 띌때 타일위치가 아니거 그냥 이미지오브젝트 삭제하고 드래그상태 해제,
+타일위치라면 타일의 IsBuildTower검사한후 towerSpawner(Tower,RayCasthit)호출
+설치 성공했다면 현제 덱슬롯을 빈상태로 초기화
+
+4-2 towerSpawner(Tower, RayCasthit ) 
+먼저 전달받은 Tower를 towerList에서 해당 타워의 랭크를 확인하고 해당 랭크 목록중에서 같은 이름의 타워를 찾음
+찾았다면 해당 게임오브젝트를 반환하고 아니라면 Null반환
+찾는데 성공했다면
+RayCasthit 의 타일 스크립트 IsBuildTower 재검사
+설치 가능한 상태라면 해당위치로 게임오브젝트
+생성함 생성한후 시너지 효과 업데이트 위해서
+SynergySystem.AddTower(Tower) 호출
+
+4-3 SynergySystem.AddTower(Tower)
+시너지 시스템은 전체 로 봤을때
+딕셔너리 6개로 관리 종족,직업 2종류 이므로 종족관리 3개
+직업관리 3개(현제 종족의 총숫자, 현제 종족의 시너지 단계,
+현제 종족의 시너지단계 필요수치 )
+AddTower(Tower)에서 현제 종족과 직업의 총 숫자를 관리하는 딕셔너리의 int 값을 1 증가
+이후에 CheckSynergy()호출
+
+4-4 CheckSynergy()
+시너지 필요 수치값을 단계마다 배열로 가짐
+ex) (1단계 2,2단계 3 3단계 6)->int[] {2,3,6}
+0번쨰 배열부터 확인해서 
+다음단계의 수치보다 적다면 현제 단계를
+현제 종족의 시너지 단계에 종족과 직업에 int 값 대입
+이후에 전체 값을 임시로 만든 판넬에 수치 대입
+
+5-1 웨이브 진행
+각 웨이브 정보를 가지는 Wave구조체
+웨이브나올 몬스터 , 해당 웨이브의 마지막몬스터(보스), 웨이브 몬스터 숫자, 몬스터 나올 간격
+
+WaveSystem의 WaveStart함수는 CheckWave에서
+현제 웨이브의 몬스터와 마지막 몬스터 둘다 Null은 아닌지
+검사 하고 EnemySpawner 클래스의 웨이브 준비가 되어있는지 확인 한뒤  enemySpawner.Spawn(waves)호출
+
+5-2 enemySpawner.Spawn(waves)
+bool형 웨이브 준비 변수를 false로 바꾼뒤 코루틴으로 웨이브 시작
+현제 웨이브의 간격만큼 기다리면서 일반 몬스터 소환
+소환한뒤 Gameobject리스트에 저장,
+오브젝트가 Enemy를 가지고 있지 않다면 추가
+Enemy.Create(Transform[]) 로 초기화 하면서
+이동경로를 전달함
+
+후에 보스몹도 같은 방식으로 진행
+
+5-3 웨이브 종료
+몬스터가 끝에 도달할때마다DestroyMonster(GameObject)
+으로 몬스터 삭제와 몬스터 리스트에서 삭제 예정
+몬스터 리스트가 전부 비었다면 웨이브 준비 변수를 true변환
+
+6 정보창 
+모든 DeckSlot과 GachaSlot은 Onmouse,OnMouseOff 함수를 가지고 있고 EventTrigger 을 이용해서 마우스가 위에있을시  OnMouse 를 호출하고 나가면 OnMouseOff호출함
+OnMouse에서는 Explain.Set(Tower) 호출
+Explain.Set에서는 지정한 Panel을 활성화하고
+해당 Panel 에 이미지와 이름등 대입함
+OnMouseOff호출은 단순하게 해당 Panel을 비활성화함
+

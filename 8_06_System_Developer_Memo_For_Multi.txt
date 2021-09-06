@@ -1,0 +1,24 @@
+
+
+플레이어 별로 묶어야 할 클래스(캔버스 내부에 PlayerManager오브젝트 등록)
++컴포넌트로 적용 목록
++EnemySpawner 
+(WaveSystem을 전역함수로 하고 WaveSystem의 EnemySpawner리스트에 등록해야함
+해당과정으로 각 WaveSystem의 준비상태를 보고 일괄 웨이브 시작함 )
+(문제로는 웨이포인트를 일단 직접 넣는식으로 해놨음)
++GachaSystem
+(가챠,덱 판넬 전달 받아서 자식오브젝트의 Slot목록 가져와서 저장하고 Slot들의 시작 셋팅을 진행함)
+(슬롯 전달 가능하다면 싱글턴 아니라면 개인으로)
++Player_Info
++Explain
++SynergySystem
+
+
+
+전체로 묶어야 할 클래스(싱글턴)
+-전역변수 용 클래스
+Common_Static_Field
+
+GamaManager
++WaveSystem 0
++TowerList 0
